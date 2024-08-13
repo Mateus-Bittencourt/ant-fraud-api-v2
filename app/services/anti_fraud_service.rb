@@ -4,19 +4,18 @@ class AntiFraudService
   end
 
   def call
-    @transaction.recommendation = recommendation
-    @transaction.save!
-    { transaction_id: @transaction.transaction_id, recommendation: @transaction.recommendation }
+    recommendation = evaluate_recommendation
+    @transaction.update!(recommendation: recommendation)
+    { transaction_id: @transaction.transaction_id, recommendation: recommendation }
   end
 
   private
 
-  def recommendation
+  def evaluate_recommendation
     suspicious_transaction? ? 'deny' : 'approve'
   end
 
   def suspicious_transaction?
-    # Example rules:
     too_many_transactions_in_a_row? || high_value_transaction? || user_has_chargeback?
   end
 

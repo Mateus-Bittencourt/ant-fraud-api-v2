@@ -3,8 +3,20 @@ class TransactionsController < ApplicationController
     transaction = Transaction.new(transaction_params)
     antifraud_service = AntiFraudService.new(transaction)
 
-    recommendation = antifraud_service.call
-    render json: recommendation
+
+
+
+    if transaction.save
+      # Chamar o job para análise mais detalhada
+      FraudAnalysisJob.perform_async(transaction.id)
+
+      # Retornar a recomendação inicial
+      recommendation = antifraud_service.call
+      render json: recommendation
+    else
+      render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
+    end
+
   end
 
   private
