@@ -1,3 +1,7 @@
+require 'net/http'
+require 'uri'
+require 'json'
+
 class FraudAnalysisJob
   include Sidekiq::Job
 
@@ -15,7 +19,7 @@ class FraudAnalysisJob
   private
 
   def high_risk?(transaction)
-    suspicious_user?(transaction) || suspicious_merchants?(transaction) || suspicious_device?(transaction) || excessive_transactions?(transaction)
+    suspicious_user?(transaction) || suspicious_merchant?(transaction) || suspicious_device?(transaction) || excessive_transactions?(transaction)
   end
 
   def suspicious_user?(transaction)
@@ -26,7 +30,7 @@ class FraudAnalysisJob
     SuspiciousDevice.exists?(device_id: transaction.device_id)
   end
 
-  def suspicious_merchants?(transaction)
+  def suspicious_merchant?(transaction)
     SuspiciousMerchant.exists?(merchant_id: transaction.merchant_id)
   end
 
@@ -58,11 +62,26 @@ class FraudAnalysisJob
 
   def add_to_suspicious_entities(transaction)
     SuspiciousUser.find_or_create_by(user_id: transaction.user_id) if suspicious_user?(transaction)
-    SuspiciousMerchant.find_or_create_by(merchant_id: transaction.merchant_id) if suspicious_merchants?(transaction)
+    SuspiciousMerchant.find_or_create_by(merchant_id: transaction.merchant_id) if suspicious_merchant?(transaction)
     SuspiciousDevice.find_or_create_by(device_id: transaction.device_id) if suspicious_device?(transaction)
   end
 
   def report_to_acquirer(transaction)
-    # Implementar lógica para enviar informações para a API da adquirente
+    uri = URI.parse("http://localhost:3000/report_fraud")
+
+    request = Net::HTTP::Post.new(uri)
+    request.content_type = "application/json"
+    request.body = {
+      transaction_id: transaction.transaction_id,
+      suspected_fraud: transaction.suspected_fraud
+    }.to_json
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+      http.request(request)
+    end
+
+    unless response.is_a?(Net::HTTPSuccess)
+      Rails.logger.error("Failed to report transaction #{transaction.transaction_id} to acquirer: #{response.body}")
+    end
   end
 end

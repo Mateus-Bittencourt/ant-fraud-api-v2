@@ -1,10 +1,10 @@
 class TransactionsController < ApplicationController
+  skip_before_action :verify_authenticity_token
+
+  # Endpoint para criar uma nova transação
   def create
     transaction = Transaction.new(transaction_params)
     antifraud_service = AntiFraudService.new(transaction)
-
-
-
 
     if transaction.save
       # Chamar o job para análise mais detalhada
@@ -16,7 +16,19 @@ class TransactionsController < ApplicationController
     else
       render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
     end
+  end
 
+  # Endpoint para registrar chargebacks
+  def register_chargeback
+    transaction_id = params[:transaction_id]
+    transaction = Transaction.find_by(transaction_id: transaction_id)
+
+    if transaction
+      transaction.update!(has_cbk: true)
+      render json: { message: 'Chargeback registrado com sucesso' }, status: :ok
+    else
+      render json: { error: 'Transação não encontrada' }, status: :not_found
+    end
   end
 
   private

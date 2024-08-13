@@ -1,6 +1,10 @@
 class Transaction < ApplicationRecord
-   # Calcular o limite baseado nas transações do mesmo usuário
-   def self.calculate_limit(user_id)
+  validates :transaction_id, :merchant_id, :user_id, :card_number, :transaction_date, :transaction_amount, :device_id, presence: true
+  validates :transaction_id, uniqueness: true
+  validates :transaction_amount, numericality: { greater_than: 0 }
+
+  # Calcular o limite baseado nas transações do mesmo usuário
+  def self.calculate_limit(user_id)
     # Buscar transações do mesmo usuário nos últimos 30 dias
     transactions = where(user_id: user_id).where("created_at > ?", 30.days.ago)
     transaction_amounts = transactions.pluck(:transaction_amount)
@@ -13,7 +17,7 @@ class Transaction < ApplicationRecord
     variance = transaction_amounts.sum { |amount| (amount - mean) ** 2 } / transaction_amounts.size.to_f
     std_dev = Math.sqrt(variance)
 
-    # Defina o limite como média + 2 desvios padrão
+    # Defina o limite como média + 3 desvios padrão
     mean + 3 * std_dev
   end
 

@@ -9,6 +9,7 @@ class CreateSuspiciousEntities < ActiveRecord::Migration[7.1]
       t.integer :merchant_id
       t.timestamps
     end
+
     create_table :suspicious_users do |t|
       t.integer :user_id
       t.timestamps
