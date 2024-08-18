@@ -63,7 +63,7 @@ Send a POST request with a payload like this:
   ```
 To the endpoint:
   ```bash
-  http://localhost:3001/transactions
+  POST http://localhost:3001/transactions
   ```
 
 Response:
@@ -77,7 +77,7 @@ Response:
 ### 📚 Register a Chargeback
 Send a PATCH request with the transaction_id to the endpoint:
   ```bash
-  PATCH http://localhost:3001/transactions/:transaction_id
+  PATCH http://localhost:3001/transactions/register_chargeback
   ```
 Example payload:
   ```json
@@ -98,7 +98,7 @@ To log in and receive a JWT token, send a POST request with the following payloa
   ```
 To the endpoint:
   ```bash
-  http://localhost:3001/auth/login
+  POST http://localhost:3001/auth/login
   ```
 
 Response:

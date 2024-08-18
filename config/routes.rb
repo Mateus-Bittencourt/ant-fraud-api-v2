@@ -3,7 +3,7 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
   resources :transactions, only: [:create] do
     collection do
-      post :register_chargeback
+      patch :register_chargeback
     end
   end
   post 'auth/login', to: 'authentication#login'
