@@ -96,7 +96,7 @@ To log in and receive a JWT token, send a POST request with the following payloa
   "password": "1234"
 }
   ```
-To the endpoint:
+Send the request to:
   ```bash
   POST http://localhost:3001/auth/login
   ```
