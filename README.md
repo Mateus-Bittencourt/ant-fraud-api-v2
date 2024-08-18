@@ -24,16 +24,16 @@ Clone this repository and install the dependencies with the following commands:
   yarn install
   ```
 
-### Seed Data
-To populate the database with initial data (I created a single user to implement simple JWT authentication), run:
-  ```bash
-  rails db:seed
-  ```
-
 ### Database Creation and Initialization
 Run the following commands:
   ```bash
   rails db:create db:migrate
+  ```
+
+### Seed Data
+To populate the database with initial data (I created a single user to implement simple JWT authentication), run:
+  ```bash
+  rails db:seed
   ```
 
 ### 🚀 Running the Application
