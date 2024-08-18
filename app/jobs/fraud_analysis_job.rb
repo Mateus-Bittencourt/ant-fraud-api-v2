@@ -67,21 +67,21 @@ class FraudAnalysisJob
   end
 
   def report_to_acquirer(transaction)
-    uri = URI.parse("http://localhost:3000/report_fraud")
+    # uri = URI.parse("http://localhost:3000/report_fraud")
 
-    request = Net::HTTP::Post.new(uri)
-    request.content_type = "application/json"
-    request.body = {
-      transaction_id: transaction.transaction_id,
-      suspected_fraud: transaction.suspected_fraud
-    }.to_json
+    # request = Net::HTTP::Post.new(uri)
+    # request.content_type = "application/json"
+    # request.body = {
+    #   transaction_id: transaction.transaction_id,
+    #   suspected_fraud: transaction.suspected_fraud
+    # }.to_json
 
-    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
-      http.request(request)
-    end
+    # response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+    #   http.request(request)
+    # end
 
-    unless response.is_a?(Net::HTTPSuccess)
-      Rails.logger.error("Failed to report transaction #{transaction.transaction_id} to acquirer: #{response.body}")
-    end
+    # unless response.is_a?(Net::HTTPSuccess)
+    #   Rails.logger.error("Failed to report transaction #{transaction.transaction_id} to acquirer: #{response.body}")
+    # end
   end
 end
