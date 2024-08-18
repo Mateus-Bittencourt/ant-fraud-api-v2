@@ -6,5 +6,7 @@ Rails.application.routes.draw do
       post :register_chargeback
     end
   end
+  post 'auth/login', to: 'authentication#login'
+
   mount Sidekiq::Web => '/sidekiq'
 end

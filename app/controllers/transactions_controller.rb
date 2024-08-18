@@ -1,6 +1,4 @@
 class TransactionsController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   # Endpoint para criar uma nova transação
   def create
     transaction = Transaction.new(transaction_params)

@@ -18,7 +18,7 @@ class Transaction < ApplicationRecord
     std_dev = Math.sqrt(variance)
 
     # Defina o limite como média + 3 desvios padrão
-    mean + 3 * std_dev
+    mean + 2 * std_dev
   end
 
   # Verificar se a transação é considerada de alto valor

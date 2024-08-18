@@ -1,96 +1,115 @@
+ Anti-Fraud API
 
-# Ant-Fraud API
+## 🚀 Overview
+This Anti-Fraud API is designed to evaluate financial transactions and determine if they are fraudulent or not based on a set of rules and historical analysis. The API utilizes Ruby on Rails, Redis, and Sidekiq to provide an efficient and scalable solution.
 
-> An Anti-fraud works by receiving information about a transaction and inferring whether it is a fraudulent transaction or not before authorizing it.
+* **Ruby version**: 3.1.2
+* **Rails version**: 7.1.3
+* **SQLite version**: 1.4
+* **Redis version**: 6.0.16
+* **Sidekiq version**: 6.5.0
 
+## 💻 Installation
 
-* Ruby version
-  3.1.2
+### Dependencies
+- **Redis**: Install Redis with the following command:
+  ```bash
+  sudo apt-get install redis-server
+  ```
 
-* Rails version
-  7.1.3
+### Setup
+Clone this repository and install the dependencies with the following commands:
+  ```bash
+  bundle install
+  yarn install
+  ```
 
-* SQLite version
-  1.4
+### Seed Data
+To populate the database with initial data (I created a single user to implement simple JWT authentication), run:
+  ```bash
+  rails db:seed
+  ```
 
-* Redis version
-  6.0.16
+### Database Creation and Initialization
+Run the following commands:
+  ```bash
+  rails db:create db:migrate
+  ```
 
-* Sidekiq version
-  6.5.0
+### 🚀 Running the Application
+Run the following commands:
+  ```bash
+  rails s -p 3001
+  ```
+  ```bash
+  redis-server
+  ```
+  ```bash
+  bundle exec sidekiq
+  ```
 
+### 📚 Using the API
+Send a POST request with a payload like this:
+  ```json
+  {
+    "transaction_id": 2342357,
+    "merchant_id": 29744,
+    "user_id": 97051,
+    "card_number": "434505******9116",
+    "transaction_date": "2019-11-31T23:16:32.812632",
+    "transaction_amount": 373,
+    "device_id": 285475
+  }
+  ```
+To the endpoint:
+  ```bash
+  http://localhost:3001/transactions
+  ```
 
-## 💻 How to install
-
-To install the project on your machine, follow these steps:
-
-* Configuration:
-  Install Redis-Server command bellow:
-```
-sudo apt-get install redis-server
-```
-
-
-* Clone this repository and install the dependencies with the following commands in your terminal:
-```
-bundle install
-```
-```
-yarn install
-```
-## Database creation and initialization
-
-run in your terminal:
-```
-rails db:create db:migrate
-```
-
-## Run application
-
-run the commands below, each in a different terminal tab
-```
-rails s -p 3001
-```
-```
-redis-server
-```
-```
-bundle exec sidekiq
-```
-
-## Using the API
-
-To register a transaction send a POST request with a payload like this:
-```
-{
-"transaction_id" : 2342357,
-"merchant_id" : 29744,
-"user_id" : 97051,
-"card_number" : "434505******9116",
-"transaction_date" : "2019-11-31T23:16:32.812632",
-"transaction_amount" : 373,
-"device_id" : 285475
-}
-```
-
-to this path:
-```
-http://localhost:3000/transactions
-```
-
-then receive if the transaction got approve or deny:
-```
-{
+Response:
+  ```json
+  {
     "transaction_id": 2342357,
     "recommendation": "approve"
+  }
+  ```
+
+### 📚 Register a Chargeback
+Send a PATCH request with the transaction_id to the endpoint:
+  ```bash
+  PATCH http://localhost:3001/transactions/:transaction_id
+  ```
+Example payload:
+  ```json
+  {
+    "transaction_id": 2342357
+  }
+  ```
+## 📚 Authentication
+The API uses JWT (JSON Web Tokens) for authentication. When a user logs in, they receive a token that must be included in the Authorization header for subsequent requests.
+
+### Login
+To log in and receive a JWT token, send a POST request with the following payload:
+  ```json
+{
+  "email": "mateusmbittencourt@gmail.com",
+  "password": "1234"
 }
-```
+  ```
+To the endpoint:
+  ```bash
+  http://localhost:3001/auth/login
+  ```
 
-To register a chargeback send a PATCH request with the transaction_id to the path:
-```
-http://localhost:3000/transactions/:transaction_id
-```
+Response:
+  ```json
+  {
+    "token": "your_jwt_token_here"
+  }
+  ```
+
+Include the received token in the Authorization header for protected endpoints:
+Authorization: Bearer your_jwt_token_here
 
 
-
-#### ENJOY =]
+ENJOY =]
